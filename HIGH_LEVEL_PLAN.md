@@ -9,38 +9,51 @@
 ## Dependency Tree Overview
 
 ```
-Resume-API (Core Service)
-├── DEPENDS ON: Resume-SSO (authentication/JWT validation)
+Resume-API (Core Backend Service)
+├── DEPENDS ON:
+│   └── Resume-SSO (authentication/JWT validation)
 │
-├── MVP-1: Core Resume API ⟶ Blocks: Resume-UI basic features
+├── BLOCKS:
+│   ├── Resume-UI (requires API for all resume operations)
+│   ├── Resume-Mobile-UI (requires API for mobile resume operations)
+│   └── Resume-Processor (provides data for PDF generation, AI processing)
+
+Services that DEPEND on Resume-API:
+├── Resume-UI (MVP-1: Resume CRUD, templates, exports)
+├── Resume-Mobile-UI (MVP-1: Mobile resume operations)
+├── Resume-Processor (MVP-1.5: PDF generation, AI features)
+└── Resume-Admin (indirect: for monitoring resume metrics)
+
+MVP Breakdown:
+├── MVP-1: Core Resume API ⟶ Blocks: Resume-UI, Resume-Mobile-UI basic features
 │   ├── Database Schema & Setup
 │   ├── Authentication Middleware (uses SSO JWT)
 │   ├── Resume CRUD Operations
 │   ├── Template Management System
 │   └── Basic PDF Export
 │
-├── MVP-2: Payment & Feature Gating ⟶ Blocks: Premium features
+├── MVP-2: Payment & Feature Gating ⟶ Blocks: Premium features in Resume-UI, Resume-Mobile-UI
 │   ├── Stripe Integration
 │   ├── Subscription Status Tracking
 │   └── Feature Gating Middleware
 │
-├── MVP-3: Import & Advanced Export ⟶ Blocks: Import features in UI
+├── MVP-3: Import & Advanced Export ⟶ Blocks: Import features in Resume-UI, Resume-Mobile-UI
 │   ├── PDF Import & Parsing
 │   ├── DOCX Import
 │   ├── LinkedIn Import (via OAuth)
 │   └── Multi-format Export
 │
-├── MVP-4: Website Generation ⟶ Blocks: Personal website features
+├── MVP-4: Website Generation ⟶ Blocks: Personal website features in Resume-UI
 │   ├── Static Site Generation
 │   ├── Cloudflare Pages Deployment
 │   └── Custom Domain Management
 │
-├── MVP-5: AI Features ⟶ Blocks: AI-assisted features
+├── MVP-5: AI Features ⟶ Blocks: AI features in Resume-UI, Resume-Processor AI jobs
 │   ├── Content Suggestions (Cloudflare AI)
 │   ├── Resume Analysis & ATS Scoring
 │   └── Smart Rewriting
 │
-└── MVP-6: Collaboration & Analytics ⟶ Blocks: Advanced user features
+└── MVP-6: Collaboration & Analytics ⟶ Blocks: Advanced features in Resume-UI, Resume-Admin
     ├── Real-time Collaboration (Durable Objects)
     ├── Sharing System
     └── Usage Analytics
@@ -52,7 +65,7 @@ Resume-API (Core Service)
 
 **Status**: MUST BUILD AFTER Resume-SSO JWT validation is ready
 **Dependencies**: Resume-SSO (MVP-2.1: JWT Validation)
-**Blocks**: Resume-UI, Resume-Admin
+**Blocks**: Resume-UI, Resume-Mobile-UI, Resume-Processor (for PDF/AI jobs)
 
 ### Epic 1.1: Database Schema & Setup
 **What**: D1 database structure for resume management
@@ -543,18 +556,21 @@ Resume-API (Core Service)
 
 ## What Blocks What
 
-| This Epic | Blocks These Epics |
-|-----------|-------------------|
-| MVP-1.1 (Database) | Everything |
-| MVP-1.2 (Authentication) | All API endpoints |
-| MVP-1.3 (Resume CRUD) | Resume-UI resume editor |
-| MVP-1.4 (Templates) | Resume-UI template selection |
-| MVP-1.5 (PDF Export) | Resume-UI download feature |
-| MVP-2.1 (Stripe) | All Pro/Premium features |
-| MVP-2.2 (Feature Gating) | Premium feature enforcement |
-| MVP-4.1 (Site Generation) | Resume-UI website builder |
-| MVP-5.1 (AI Suggestions) | Resume-UI AI features |
-| MVP-6.1 (Sharing) | Resume-UI share functionality |
+| This Epic | Blocks These Services/Features |
+|-----------|--------------------------------|
+| MVP-1.1 (Database) | Everything in Resume-API |
+| MVP-1.2 (Authentication) | All API endpoints requiring auth |
+| MVP-1.3 (Resume CRUD) | Resume-UI editor, Resume-Mobile-UI editor, Resume-Processor jobs |
+| MVP-1.4 (Templates) | Resume-UI template selection, Resume-Mobile-UI templates |
+| MVP-1.5 (PDF Export) | Resume-UI downloads, Resume-Mobile-UI downloads, Resume-Processor PDF jobs |
+| MVP-2.1 (Stripe) | All Pro/Premium features across Resume-UI, Resume-Mobile-UI |
+| MVP-2.2 (Feature Gating) | Premium enforcement in Resume-UI, Resume-Mobile-UI |
+| MVP-3.3 (LinkedIn Import) | LinkedIn features in Resume-UI, Resume-Mobile-UI |
+| MVP-4.1 (Site Generation) | Website builder in Resume-UI |
+| MVP-5.1 (AI Suggestions) | AI features in Resume-UI, Resume-Processor AI jobs |
+| MVP-6.1 (Sharing) | Share functionality in Resume-UI, Resume-Mobile-UI |
+| MVP-6.2 (Collaboration) | Real-time editing in Resume-UI |
+| MVP-6.3 (Analytics) | Analytics dashboard in Resume-Admin |
 
 **External Dependencies**:
 - Resume-SSO (MVP-1.4: Login with JWT) ⟶ Blocks Epic 1.2 (Authentication Middleware)
